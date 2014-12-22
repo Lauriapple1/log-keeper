@@ -8,9 +8,14 @@ import static de.zalando.pequod.flume.source.SourceConstants.CONFIG_BATCH_SIZE;
 import static de.zalando.pequod.flume.source.SourceConstants.CONFIG_CHARSET;
 import static de.zalando.pequod.flume.source.SourceConstants.CONFIG_FILE_RECORD_MAPPING;
 import static de.zalando.pequod.flume.source.SourceConstants.CONFIG_MAX_EVENT_FLUSH_DELAY_IN_MS;
+import static de.zalando.pequod.flume.source.SourceConstants.CONFIG_PATTERN_DIRECTORY;
 import static de.zalando.pequod.flume.source.SourceConstants.DEFAULT_BATCH_SIZE;
 import static de.zalando.pequod.flume.source.SourceConstants.DEFAULT_CHARSET;
 import static de.zalando.pequod.flume.source.SourceConstants.DEFAULT_FLUSH_DELAY_IN_MS;
+import static de.zalando.pequod.flume.source.SourceConstants.DEFAULT_PATTERN_DIRECTORY;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import java.nio.charset.Charset;
 
@@ -30,8 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+
+import de.zalando.grok.GrokMapper;
 
 /**
  * Consumer for records read by {@link de.zalando.pequod.flume.source.LogFileReader}. Each record is mapped according to
@@ -43,7 +49,6 @@ final class RecordConsumer implements Runnable, Configurable {
 
     private ChannelProcessor channelProcessor;
     private final BlockingQueue<String> inputQueue;
-    private final ImmutableMap<String, String> configuredPatterns;
     private GrokMapper recordMapper;
 
     private volatile boolean isRunning;
@@ -61,15 +66,12 @@ final class RecordConsumer implements Runnable, Configurable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecordConsumer.class);
 
-    public RecordConsumer(final BlockingQueue<String> inputQueue,
-            final ImmutableMap<String, String> configuredPatterns) {
+    public RecordConsumer(final BlockingQueue<String> inputQueue) {
 
         checkArgument(inputQueue != null, "input queue must not be null");
-        checkArgument(configuredPatterns != null, "map of configured patterns must not be null");
 
         this.inputQueue = inputQueue;
         this.isConfigured = false;
-        this.configuredPatterns = configuredPatterns;
     }
 
     public void setChannelProcessor(final ChannelProcessor channelProcessor) {
@@ -100,7 +102,16 @@ final class RecordConsumer implements Runnable, Configurable {
             CONFIG_FILE_RECORD_MAPPING);
 
         charset = Charset.forName(charsetString);
-        recordMapper = new GrokMapper(fileRecordMapping, configuredPatterns);
+
+        final String patternDirectory = context.getString(CONFIG_PATTERN_DIRECTORY, DEFAULT_PATTERN_DIRECTORY);
+        final GrokMapper.Builder grokMapperBuilder = new GrokMapper.Builder();
+        try {
+            recordMapper = grokMapperBuilder.withPatternDefinitionsFromDirectory(new URL(patternDirectory))
+                                            .withRecordMappingDefinition(fileRecordMapping).build();
+        } catch (final MalformedURLException e) {
+            throw new IllegalArgumentException(String.format("illegal URL defined for pattern directory -> '%s'",
+                    patternDirectory));
+        }
 
         isConfigured = true;
         LOGGER.info("event consumer has been configured");

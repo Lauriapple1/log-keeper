@@ -87,10 +87,8 @@ public final class TailFileSource extends AbstractEventDrivenSource {
         checkArgument(numberOfConsumers > 0, "there has to be at least 1 consumer! configured: [numberOfConsumers=%s]",
                 numberOfConsumers);
 
-        final ImmutableMap<String, String> configuredPatterns = PatternLoader.load(patternDirectory);
-
         for (int i = 0; i < numberOfConsumers; i++) {
-            final RecordConsumer recordConsumer = new RecordConsumer(sharedQueue, configuredPatterns);
+            final RecordConsumer recordConsumer = new RecordConsumer(sharedQueue);
             recordConsumer.configure(context);
             consumers.add(recordConsumer);
         }
