@@ -7,7 +7,7 @@ the log files from the Docker host and of other Docker containers referred to as
 
 When `Log Keeper` is started it looks for already running `applications` in its `/app` mount (see description below)
 and creates corresponding `syslog-ng` configurations. In addition, it monitors `/app` for new applications showing up
-in order to configure `syslog-ng` to take care for those logs as well.  *NOTE:* These mechanisms work only if you follow
+in order to configure `syslog-ng` to take care for those logs as well.  *NOTE:* These mechanisms only work if you follow
 the steps specified below:
 
 
