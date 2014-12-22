@@ -1,0 +1,12 @@
+# Docker host configuration
+
+source s_host {
+    file("/host/log/syslog");
+    file("/host/log/cloud-init.log");
+    file("/host/log/cloud-init-output.log");
+};
+
+log {
+    source(s_host);
+    destination(d_all_logs);
+};
