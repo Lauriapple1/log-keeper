@@ -1,0 +1,29 @@
+# maven
+/target
+
+# eclipse
+/.settings
+.classpath
+.project
+
+# intellij
+/.idea
+*.iml
+
+# vagrant
+/.vagrant
+/vagrant_ansible_inventory_default
+
+# python
+__pycache__
+build
+dist
+*.egg*
+venv*
+
+# tests
+junit.xml
+.coverage
+
+# mac
+.DS_Store
