@@ -199,12 +199,21 @@ public final class GrokMapper {
             return this;
         }
 
-        public Builder withPatternConfiguration(final String patternId, final String pattern) {
+        public Builder withPatternDefinition(final String patternId, final String pattern) {
 
             checkArgument(!isNullOrEmpty(patternId), "pattern id must not be null or empty");
             checkArgument(!isNullOrEmpty(pattern), "pattern must not be null or empty");
 
             patternDefinitions.put(patternId, pattern);
+            return this;
+        }
+
+        public Builder withPatternDefinitions(final Map<String, String> patternDefinitions) {
+
+            checkNotNull(patternDefinitions, "map of pattern definitions must not be null");
+            checkArgument(!patternDefinitions.isEmpty(), "map of pattern definitions must not be empty");
+
+            patternDefinitions.putAll(patternDefinitions);
             return this;
         }
 

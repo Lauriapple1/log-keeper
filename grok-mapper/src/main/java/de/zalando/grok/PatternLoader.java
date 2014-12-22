@@ -46,6 +46,9 @@ final class PatternLoader {
         final List<Map<String, String>> patternMaps = Lists.newArrayList();
         
         final String protocol = url.getProtocol();
+
+        LOGGER.debug("protocol of [url={}] is {}", url, protocol);
+        
         if(URL_PROTOCOL_FILE.equals(protocol)){
             final Path patternDirectoryPath = FileSystems.getDefault().getPath(url.getPath());
             final Stream<Path> patternFilesStream = Files.list(patternDirectoryPath);
