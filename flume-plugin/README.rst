@@ -13,6 +13,7 @@ Installation
 ============
 
 - You need JDK 8.
+- install `grok-mapper <https://github.com/zalando/log-keeper/tree/master/grok-mapper>`_ in your local repository
 - ``mvn clean install -Passemble-artifacts``
 - create folder ``$FLUME_HOME/plugins.d`` 
 - copy and extract ``pequod-flume-plugin-1-dist.tar.gz`` in ``plugins.d``

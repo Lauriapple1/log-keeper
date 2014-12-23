@@ -1,4 +1,4 @@
 ==================
 Log Keeper Project
 ==================
-NOTE: Documentation + more tests are following
+Log Keeper is a collection of tools to capture, parse and ship log data from a Docker container.
